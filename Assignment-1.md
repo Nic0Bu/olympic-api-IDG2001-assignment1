@@ -1,4 +1,7 @@
 # Assignment 1
+[Go to Assignment 2](../Assignment-2/Assignment-2.md)
+
+---
 
 ## API description
 The assignment is to build an API and an API user control/administration system.
