@@ -1,0 +1,13 @@
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+sqlalchemy>=2.0.0
+pydantic>=2.0.0
+pydantic[email]
+email-validator
+bcrypt
+pytest>=8.0.0
+httpx
+requests
+psycopg2-binary
+flake8
+mypy
