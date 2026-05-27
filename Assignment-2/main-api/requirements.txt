@@ -7,3 +7,6 @@ email-validator
 bcrypt
 requests
 psycopg2-binary
+pytest>=8.0.0
+flake8
+mypy
