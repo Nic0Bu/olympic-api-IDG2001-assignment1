@@ -1,0 +1,78 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: olympic
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  main-api:
+    build: ./main-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - token-shop
+      - cache
+      - rate-limiter
+      - logger
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/olympic
+      TOKEN_SHOP_URL: http://token-shop:8004
+      CACHE_URL: http://cache:8001
+      RATE_LIMITER_URL: http://rate-limiter:8002
+      LOGGER_URL: http://logger:8003
+      ADMIN_KEY: supersecret
+    volumes:
+      - ./data:/app/data
+    networks:
+      - backend
+
+  token-shop:
+    build: ./token-shop
+    ports:
+      - "8004:8004"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/olympic
+      ADMIN_KEY: supersecret
+    networks:
+      - backend
+
+  cache:
+    build: ./cache
+    ports:
+      - "8001:8001"
+    networks:
+      - backend
+
+  rate-limiter:
+    build: ./rate-limiter
+    ports:
+      - "8002:8002"
+    networks:
+      - backend
+
+  logger:
+    build: ./logger
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+
+networks:
+  backend:
+    driver: bridge
