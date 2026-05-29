@@ -24,14 +24,13 @@ from pydantic import BaseModel
 LOG_DIR = Path(os.getenv("LOG_DIR", "/app/logs"))
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-# How many entries to hold in memory before writing to disk
 FLUSH_SIZE = 10
 
 app = FastAPI(title="Logger")
 
 _buffer: list = []
 _retention_days: int = 7
-_last_flush_date: Optional[str] = None  # tracks when we last rotated the log file
+_last_flush_date: Optional[str] = None
 
 
 class LogEntry(BaseModel):
@@ -88,12 +87,10 @@ def add_log(entry: LogEntry):
     }
     _buffer.append(row)
 
-    # flush when buffer is full
     if len(_buffer) >= FLUSH_SIZE:
         _flush(_buffer, now)
         _buffer = []
 
-        # if the day changed since last flush, clean up old logs
         if _last_flush_date != today_str:
             _cleanup_old_files(now)
         _last_flush_date = today_str
@@ -112,6 +109,5 @@ def set_retention(body: RetentionUpdate):
     if body.n < 1:
         raise HTTPException(status_code=400, detail="n must be at least 1")
     _retention_days = body.n
-    # apply immediately so stale files get cleaned up right away
     _cleanup_old_files(datetime.now())
     return {"n": _retention_days}

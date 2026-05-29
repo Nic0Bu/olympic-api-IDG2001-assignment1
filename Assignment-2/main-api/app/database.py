@@ -6,7 +6,6 @@ from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 _url = os.getenv("DATABASE_URL", "sqlite:///./olympic.db")
 
-# Render (and some other hosts) give 'postgres://' which SQLAlchemy doesn't accept
 if _url.startswith("postgres://"):
     _url = _url.replace("postgres://", "postgresql://", 1)
 

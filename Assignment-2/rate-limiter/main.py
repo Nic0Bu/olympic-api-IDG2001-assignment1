@@ -17,7 +17,6 @@ from pydantic import BaseModel
 
 app = FastAPI(title="Rate Limiter")
 
-# user_id -> list of ISO timestamp strings
 _data: dict = {}
 
 WINDOW_SECONDS = 10

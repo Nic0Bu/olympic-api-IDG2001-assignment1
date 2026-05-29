@@ -16,7 +16,6 @@ from pydantic import BaseModel
 
 app = FastAPI(title="Cache")
 
-# { key: {"data": ..., "timestamp": iso-string} }
 _store: dict = {}
 _hits = 0
 _misses = 0

@@ -42,7 +42,6 @@ class PurchaseCode(Base):
 class TokenPrice(Base):
     __tablename__ = "token_price"
     id = Column(Integer, primary_key=True)
-    # how many tokens per unit of money
     price = Column(Float, nullable=False, default=10.0)
 
 
@@ -51,7 +50,6 @@ app = FastAPI(title="Token Shop")
 
 @app.on_event("startup")
 def init_db():
-    # wait for postgres to be ready
     for i in range(30):
         try:
             Base.metadata.create_all(bind=engine)
@@ -110,7 +108,7 @@ def verify_code(body: VerifyRequest, db: Session = Depends(get_db)):
     """Check a code and return how many tokens it's worth. Marks the code as used."""
     purchase = (
         db.query(PurchaseCode)
-        .filter(PurchaseCode.code == body.code, PurchaseCode.used == False)  # noqa: E712
+        .filter(PurchaseCode.code == body.code, ~PurchaseCode.used)
         .first()
     )
     if not purchase:

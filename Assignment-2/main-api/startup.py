@@ -6,7 +6,6 @@ from sqlalchemy.exc import OperationalError
 
 print("Starting up...")
 
-# Postgres might not be ready immediately even with depends_on
 for attempt in range(30):
     try:
         from app.database import engine, SessionLocal, Base

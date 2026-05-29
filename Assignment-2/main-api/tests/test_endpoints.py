@@ -20,10 +20,6 @@ TEST_EMAIL = "endpoint_test_user@example.com"
 TEST_PASSWORD = "testpass123"
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
 def _get_or_create_user() -> dict:
     resp = requests.post(
         f"{BASE_URL}/user",
@@ -38,10 +34,6 @@ def _get_or_create_user() -> dict:
 def _delete_user(user_id: str) -> None:
     requests.delete(f"{BASE_URL}/user/{user_id}")
 
-
-# ---------------------------------------------------------------------------
-# Tests
-# ---------------------------------------------------------------------------
 
 def test_create_user():
     """POST /v2/user creates a user with 100 starting tokens."""
@@ -108,11 +100,10 @@ def test_invalid_user_id_returns_401():
 
 
 def test_token_shop_buy_and_redeem():
-    """Full token shop flow: buy → get code → redeem → tokens added."""
+    """Full token shop flow: buy a code then redeem it for tokens."""
     user = _get_or_create_user()
     requests.patch(f"{BASE_URL}/user/{user['id']}", json={"tokens": 0})
 
-    # buy from the shop (10 money, price is 10 tokens/money = 100 tokens)
     buy_resp = requests.post(
         f"{TOKEN_SHOP_URL}/buy",
         json={"username": TEST_EMAIL, "password": TEST_PASSWORD, "money": 1},
@@ -120,7 +111,6 @@ def test_token_shop_buy_and_redeem():
     assert buy_resp.status_code == 200, f"Buy failed: {buy_resp.text}"
     code = buy_resp.json()["secret"]
 
-    # redeem at main API
     redeem_resp = requests.post(
         f"{BASE_URL}/tokens",
         json={"user_id": user["id"], "code": code},
@@ -132,7 +122,7 @@ def test_token_shop_buy_and_redeem():
 
 
 def test_code_cannot_be_reused():
-    """A code that's already been redeemed returns 400."""
+    """A code that has already been redeemed returns 400."""
     user = _get_or_create_user()
 
     buy_resp = requests.post(
@@ -158,10 +148,6 @@ def test_invalid_code_returns_400():
     assert resp.status_code == 400, f"Expected 400, got {resp.status_code}"
     _delete_user(user["id"])
 
-
-# ---------------------------------------------------------------------------
-# Runner
-# ---------------------------------------------------------------------------
 
 def _run_all() -> bool:
     tests = [

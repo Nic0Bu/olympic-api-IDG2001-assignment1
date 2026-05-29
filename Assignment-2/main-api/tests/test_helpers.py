@@ -20,10 +20,6 @@ class MockRow:
         self.year = year
 
 
-# ---------------------------------------------------------------------------
-# _to_xml_element
-# ---------------------------------------------------------------------------
-
 class TestToXmlElement:
 
     def test_simple_dict(self):
@@ -56,10 +52,6 @@ class TestToXmlElement:
         assert elem.tag == "my_tag"
 
 
-# ---------------------------------------------------------------------------
-# to_xml_string
-# ---------------------------------------------------------------------------
-
 class TestToXmlString:
 
     def test_returns_string(self):
@@ -81,10 +73,6 @@ class TestToXmlString:
         assert len(root.findall("item")) == 2
 
 
-# ---------------------------------------------------------------------------
-# to_csv_string
-# ---------------------------------------------------------------------------
-
 class TestToCsvString:
 
     def test_dict_produces_csv(self):
@@ -95,16 +83,11 @@ class TestToCsvString:
     def test_list_of_dicts(self):
         result = to_csv_string([{"x": 1}, {"x": 2}])
         lines = result.strip().splitlines()
-        # header + 2 rows
         assert len(lines) == 3
 
     def test_empty_list_returns_empty(self):
         assert to_csv_string([]) == ""
 
-
-# ---------------------------------------------------------------------------
-# _count_medals
-# ---------------------------------------------------------------------------
 
 class TestCountMedals:
 
@@ -138,10 +121,6 @@ class TestCountMedals:
     def test_empty_rows(self):
         assert _count_medals([]) == {}
 
-
-# ---------------------------------------------------------------------------
-# _aggregate_medals
-# ---------------------------------------------------------------------------
 
 class TestAggregateMedals:
 
